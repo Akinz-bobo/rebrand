@@ -15,6 +15,13 @@ import {
   UserQuoteRequestConfirmation,
 } from "@/emails";
 import moment from "moment";
+import { Request } from "@/utils/models/Requests";
+
+type Item = {
+  name: string;
+  id: number;
+  amount: number;
+};
 
 export async function POST(req: Request, res: Response) {
   try {
@@ -44,46 +51,60 @@ export async function POST(req: Request, res: Response) {
       .map((item: any) => `${item.name} -- ${item.amount}`)
       .join(", ");
 
-    await sendEmail(
-      user.email,
-      "new Quote",
-      UserQuoteRequestConfirmation({
-        firstName: user.firstName,
-        serviceType: data.type,
-        description: quoteText,
-        timestamp: timestamp,
-        turnaroundTime: turnaroundTime,
-        adminContact: "info@diboruwa.com",
-      })
+    const newItems: Omit<Item, "id">[] = data.quote.map(
+      ({ id, ...rest }: { id: number; rest: any }) => rest
     );
 
-    if (data.type === "laundry") {
-      await sendEmail(
-        "ibrahim.saliman.zainab@gmail.com",
-        "new Quote",
-        AdminLaundryQuoteRequest({
-          adminName: "Ibrahim",
-          userName: `${user.firstName} ${user.lastName}`,
-          userEmail: user.email,
-          userContact: user.phone,
-          userAddress: `${user.address}, ${user.lga}, ${user.city}, ${user.state}`,
-          laundryItems: data.quote,
-        })
-      );
-    } else if (data.type === "cleaning") {
-      await sendEmail(
-        "ibrahim.saliman.zainab@gmail.com",
-        "new Quote",
-        AdminHomeCleaningQuoteRequest({
-          adminName: "Ibrahim",
-          userName: `${user.firstName} ${user.lastName}`,
-          userEmail: user.email,
-          userContact: user.phone,
-          userAddress: `${user.address}, ${user.lga}, ${user.city}, ${user.state}`,
-          homeCleaningAreas: data.quote,
-        })
-      );
-    }
+    const newRequest = new Request({
+      user,
+      type: data.type,
+      items: newItems,
+      from: `${user.address}, ${user.lga}, ${user.city}, ${user.state}`,
+      date: timestamp,
+    });
+
+    await newRequest.save();
+
+    // await sendEmail(
+    //   user.email,
+    //   "new Quote",
+    //   UserQuoteRequestConfirmation({
+    //     firstName: user.firstName,
+    //     serviceType: data.type,
+    //     description: quoteText,
+    //     timestamp: timestamp,
+    //     turnaroundTime: turnaroundTime,
+    //     adminContact: "info@diboruwa.com",
+    //   })
+    // );
+
+    // if (data.type === "laundry") {
+    //   await sendEmail(
+    //     "ibrahim.saliman.zainab@gmail.com",
+    //     "new Quote",
+    //     AdminLaundryQuoteRequest({
+    //       adminName: "Ibrahim",
+    //       userName: `${user.firstName} ${user.lastName}`,
+    //       userEmail: user.email,
+    //       userContact: user.phone,
+    //       userAddress: `${user.address}, ${user.lga}, ${user.city}, ${user.state}`,
+    //       laundryItems: data.quote,
+    //     })
+    //   );
+    // } else if (data.type === "cleaning") {
+    //   await sendEmail(
+    //     "ibrahim.saliman.zainab@gmail.com",
+    //     "new Quote",
+    //     AdminHomeCleaningQuoteRequest({
+    //       adminName: "Ibrahim",
+    //       userName: `${user.firstName} ${user.lastName}`,
+    //       userEmail: user.email,
+    //       userContact: user.phone,
+    //       userAddress: `${user.address}, ${user.lga}, ${user.city}, ${user.state}`,
+    //       homeCleaningAreas: data.quote,
+    //     })
+    //   );
+    // }
 
     return NextResponse.json(
       { message: "emails sent successfully", success: true },

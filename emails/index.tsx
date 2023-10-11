@@ -1330,9 +1330,9 @@ export const UserQuoteRequestConfirmation: React.FC<{
     <EmailTemplate subject="Request confirmation">
       <div style={userEmailStyle}>
         <p>
-          {" "}
+         
           Hello{" "}
-          <strong style={{ textTransform: "capitalize" }}>{firstName}</strong>,,
+          <strong style={{ textTransform: "capitalize" }}>{firstName}</strong>,
         </p>
         <p>
           Thank you for expressing interest in our {serviceType} services.

@@ -164,6 +164,10 @@ const QuoteButton = styled.button`
   margin-left: auto;
   outline: none;
   border: none;
+
+  &:disabled {
+    background: var(--primary-20);
+  }
 `;
 
 const LaundryCounter: React.FC = () => {
@@ -173,7 +177,8 @@ const LaundryCounter: React.FC = () => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const [quote, setQuote] = useState<string | null>(null);
   const [notification, setNotification] = useState<string | null>(null);
-  const { handleQuote,  showModal, modalErrorType, modalMessage, closeModal } = useQuote();
+  const { handleQuote, showModal, modalErrorType, modalMessage, closeModal } =
+    useQuote();
 
   const dropdownRef = useRef<HTMLDivElement | null>(null); // Replace 'HTMLDivElement' with the appropriate element type
 
@@ -297,6 +302,7 @@ const LaundryCounter: React.FC = () => {
             toast("please sign in");
           }
         }}
+        disabled={!session}
       >
         Get a Quote
       </QuoteButton>

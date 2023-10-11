@@ -34,6 +34,8 @@ export async function POST(req: Request, res: Response) {
       return NextResponse.json({ message: "user does not exist" });
     }
 
+    console.log(body)
+
     const start = new Date();
     const due = new Date();
 

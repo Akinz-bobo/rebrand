@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 import { interceptor } from "@/axios.config";
 import { useRouter } from "next/navigation";
 
-interface AuthHook {
+interface QuoteHook {
   session: any;
   loading: boolean;
   status: any;
@@ -21,7 +21,7 @@ interface AuthHook {
   closeModal: () => void;
 }
 
-const useQuote = (): AuthHook => {
+const useQuote = (): QuoteHook => {
   const { data: session, status, update } = useSession();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -55,17 +55,31 @@ const useQuote = (): AuthHook => {
     try {
       // Perform signup logic using axios
 
-      if (data.type === "moving") {
-        await interceptor.post(`/quotes/moving`, { data });
-        setLoading(false);
-        setError(null);
+      if (
+        session?.user.phone &&
+        session?.user.address &&
+        session?.user.state &&
+        session?.user.city
+      ) {
+        if (data.type === "moving") {
+          await interceptor.post(`/quotes/moving`, { data });
+          setLoading(false);
+          setError(null);
+          openModal("success", "Submitted successfully!!!");
+        } else {
+          await interceptor.post(`/quotes`, { data });
+          setLoading(false);
+          setError(null);
+          openModal("success", "Submitted successfully!!!");
+        }
       } else {
-        await interceptor.post(`/quotes`, { data });
-        setLoading(false);
-        setError(null);
+      
+        openModal &&
+          openModal(
+            "info",
+            "Please complete your profile."
+          );
       }
-
-      openModal("success", "Submitted successfully!!!");
     } catch (error: any) {
       // console.log(error.response.data);
       setLoading(false);

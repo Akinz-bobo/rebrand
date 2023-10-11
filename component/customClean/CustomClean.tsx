@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useRef, useEffect } from "react";
 import toast from "react-hot-toast";
 import styled from "styled-components";
+import NotificationModal from "../NotificationModal";
 
 // Define the Cleanproperties interface
 interface Cleanproperties {
@@ -165,13 +166,19 @@ const Notification = styled.div`
   color: #ff0000;
   margin-top: 10px;
 `;
-const QuoteButton = styled.div`
+const QuoteButton = styled.button`
   background: var(--primary);
   padding: 10px 20px;
   border-radius: 8px;
   color: #fff;
   margin-top: auto;
   margin-left: auto;
+  outline: none;
+  border: none;
+
+  &:disabled {
+    background: var(--primary-20);
+  }
 `;
 
 const CustomClean: React.FC = () => {
@@ -309,10 +316,17 @@ const CustomClean: React.FC = () => {
             toast("please sign in to add item to cart");
           }
         }}
+        disabled={!session}
       >
         Get a Quote
       </QuoteButton>
-      {/* {quote && <div>{quote}</div>} */}
+      {showModal && (
+        <NotificationModal
+          message={modalMessage}
+          errorType={modalErrorType}
+          onClose={closeModal}
+        />
+      )}
     </Container>
   );
 };

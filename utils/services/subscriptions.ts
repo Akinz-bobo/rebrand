@@ -9,7 +9,7 @@ export function getSubscriptionsAPI() {
 }
 // Add a subscription
 export function addSubscriptionAPI(sub: Subscription) {
-  return axios.post(`${BASE_URL}`, sub);
+  return axios.post(`${BASE_URL}`, {subscription: sub});
 }
 
 // Remove a subscription

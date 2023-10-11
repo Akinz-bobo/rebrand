@@ -261,13 +261,13 @@ const Cleaning = () => {
 
       <MoreServices />
 
-      {showModal && (
+      {/* {showModal && (
         <NotificationModal
           message={modalMessage}
           errorType={modalErrorType}
           onClose={closeModal}
         />
-      )}
+      )} */}
     </Container>
   );
 };
